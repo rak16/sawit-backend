@@ -8,6 +8,7 @@ const cors = require('cors');
 
 const config = require('./config/config.js');
 
+
 app.use(express.static('public'));
 
 app.use(
@@ -43,5 +44,11 @@ app.listen(app.get('port'), err => {
         console.log(err);
     } else {
         console.log(`Server running on port ${app.get('port')}`);
+
+        // db service test
+        require('./services/db.service.js')
+            .getUsers()
+            .then(data => console.log(data))
+            .catch(err => console.log(err));
     }
 });
