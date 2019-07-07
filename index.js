@@ -28,15 +28,6 @@ app.use(cors());
 app.set('port', process.env.PORT || 5000);
 app.use(express.static('public'));
 
-app.use(
-    cookieSession({
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-        keys: [
-            config.COOKIE_SECRET
-        ]
-    })
-);
-
 // registering routes
 require('./routes')(app);
 
