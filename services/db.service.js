@@ -39,9 +39,14 @@ const getUserByEmail = email => {
 
 	pool.query(query, params, (error, results) => {
 		if (error) {
+			console.log(`Error occured while fetching user details with email: ${email}`);
+			console.log(error);
+
 			defer.reject(error);
 		} else {
-			defer.resolve(results.rows);
+			console.log(`Fetched user details with email: ${email}`);
+
+			defer.resolve(results.rows[0]);
 		}
 	});
 
