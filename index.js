@@ -6,8 +6,7 @@ const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
-const config = require('./config/config.js');
-
+const config = require('./config/config');
 
 app.use(express.static('public'));
 
@@ -38,17 +37,22 @@ app.use(
     })
 );
 
+// registering routes
+require('./routes')(app);
+
+// generic error handler
+app.use((err, req, res, next) => {
+    console.log('Error caught');
+    console.log({ err });
+
+    res.status(500).send('Couldn\'t process this request.');
+});
+
 app.listen(app.get('port'), err => {
     if (err) {
         console.log('Failed to start the server.');
         console.log(err);
     } else {
         console.log(`Server running on port ${app.get('port')}`);
-
-        // db service test
-        require('./services/db.service.js')
-            .getUsers()
-            .then(data => console.log(data))
-            .catch(err => console.log(err));
     }
 });
