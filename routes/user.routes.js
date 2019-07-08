@@ -2,7 +2,7 @@
 
 const {
     verifyAuthentication
-} = require('../middleware/auth.middleware');
+} = require('../middlewares/auth.middleware');
 
 const urlPrefix = '/api/v1';
 
