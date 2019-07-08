@@ -68,7 +68,11 @@ const authenticateUser = async (req, res, next) => {
         );
 
         res.status(200).json({
-            'user': user,
+            'user': {
+                name: user.name,
+                email: user.email,
+                created_at: user.created_at                
+            },
             'access_token': accessToken,
             'expires_in': expiresIn
         });
