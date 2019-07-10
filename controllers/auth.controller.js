@@ -14,6 +14,10 @@ const registerUser = async (req, res, next) => {
         password
     } = req.body;
 
+    if (!(name && email && password)) {
+        return res.status(422).send('Mandatory fields: name, email, password');
+    }
+
     const hashedPassword = bcrypt.hashSync(password); // TODO: Change to async hash
 
     try {
@@ -48,6 +52,10 @@ const authenticateUser = async (req, res, next) => {
         email,
         password
     } = req.body;
+
+    if (!(email && password)) {
+        return res.status(422).send('Mandatory fields: email, password');
+    }
 
     try {
         const user = await db.getUserByEmail(email);
