@@ -195,6 +195,86 @@ const getPostsByUserId = (userId, limit = 50, offset = 0) => {
 	return defer.promise;
 }
 
+const _addEntryInLikesTable = (userId, postId) => {
+	const defer = q.defer();
+
+	const createdAt = new Date();
+
+	const query = `
+		INSERT INTO likes
+			(user_id, post_id, created_at)
+		VALUES 
+			($1, $2, $3)
+	`;
+	const params = [userId, postId, createdAt];
+
+	pool.query(query, params, (error, results) => {
+		if (error) {
+			console.log(`Error occured creating entry in the likes table for userId = ${userId}, postId = ${postId}`);
+			console.log(error);
+
+			defer.reject(error);
+		} else {
+			console.log(`Made an entry in the likes table for userId = ${userId}, postId = ${postId}`);
+
+			defer.resolve(results.rows);
+		}
+	});
+
+	return defer.promise;
+}
+
+const _incrementPostLikeCount = postId => {
+	const defer = q.defer();
+
+	const query = `
+		UPDATE posts
+			SET like_count = like_count + 1
+		WHERE id = $1
+	`;
+	const params = [postId];
+
+	pool.query(query, params, (error, results) => {
+		if (error) {
+			console.log(`Error occured incrementing like count on postId = ${postId}`);
+			console.log(error);
+
+			defer.reject(error);
+		} else {
+			console.log(`Incremented like count on postId = ${postId}`);
+
+			defer.resolve(results.rows);
+		}
+	});
+
+	return defer.promise;
+}
+
+const incrementLikeCount = (userId, postId) => {
+	const defer = q.defer();
+
+	if (userId && postId) {
+		_addEntryInLikesTable(userId, postId)
+			.then(() => _incrementPostLikeCount(postId))
+			.then(() => {
+				console.log('Done liking the post');
+
+				defer.resolve('OK');
+			})
+			.catch(err => {
+				console.log('Failed liking the post');
+
+				defer.reject(err);
+			});
+	} else {
+		console.log('Mandatory parameters: userId, postId');
+
+		defer.reject(new Error('userId or postId missing'));
+	}
+
+	return defer.promise;
+}
+
 module.exports = {
 	getUsers,
 	createUser,
@@ -202,5 +282,6 @@ module.exports = {
 	getUserById,
 
 	getAllPosts,
-	getPostsByUserId
+	getPostsByUserId,
+	incrementLikeCount
 };

@@ -2,6 +2,7 @@
 
 const {
     getGlobalFeed,
+    likePost
 } = require('../controllers/feed.controller');
 
 const {
@@ -14,6 +15,6 @@ module.exports = app => {
     app.get(`${urlPrefix}/feed`, getGlobalFeed);
     app.get(`${urlPrefix}/feed/user/:user_id`, verifyAuthentication, () => {});
     app.get(`${urlPrefix}/feed/post/:post_id/likes`, verifyAuthentication, () => {});
-    app.put(`${urlPrefix}/feed/post/:post_id/like`, verifyAuthentication, () => {});
+    app.put(`${urlPrefix}/feed/post/:post_id/like`, verifyAuthentication, likePost);
     app.put(`${urlPrefix}/feed/post/:post_id/unlike`, verifyAuthentication, () => {});
 };

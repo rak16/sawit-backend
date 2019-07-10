@@ -14,6 +14,19 @@ const getGlobalFeed = async (req, res, next) => {
     }
 }
 
+const likePost = async (req, res, next) => {
+    const postId = req.params.post_id;
+    const userId = req.decoded.id;
+
+    try {
+        await db.incrementLikeCount(userId, postId);
+        return res.status(200).send(`Updated like count on ${postId}`);
+    } catch (err) {
+        next(err);
+    }
+}
+
 module.exports = {
-    getGlobalFeed
+    getGlobalFeed,
+    likePost
 };
