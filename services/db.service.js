@@ -275,6 +275,89 @@ const incrementLikeCount = (userId, postId) => {
 	return defer.promise;
 }
 
+const _removeEntryFromLikesTable = (userId, postId) => {
+	const defer = q.defer();
+
+	const query = `
+		DELETE FROM likes
+		WHERE user_id = $1 AND post_id = $2
+	`;
+	const params = [userId, postId];
+
+	pool.query(query, params, (error, results) => {
+		if (error) {
+			console.log(`Error occured removing entry from the likes table with userId = ${userId}, postId = ${postId}`);
+			console.log(error);
+
+			defer.reject(error);
+		} else {
+			console.log(`Removed entry from the likes table with userId = ${userId}, postId = ${postId}`);
+
+			defer.resolve(results.rowCount);
+		}
+	});
+
+	return defer.promise;
+}
+
+const _decrementPostLikeCount = postId => {
+	const defer = q.defer();
+
+	const query = `
+		UPDATE posts
+			SET like_count = like_count - 1
+		WHERE id = $1
+	`;
+	const params = [postId];
+
+	pool.query(query, params, (error, results) => {
+		if (error) {
+			console.log(`Error occured decrementing like count on postId = ${postId}`);
+			console.log(error);
+
+			defer.reject(error);
+		} else {
+			console.log(`Decremented like count on postId = ${postId}`);
+
+			defer.resolve(results.rows);
+		}
+	});
+
+	return defer.promise;
+}
+
+const decrementLikeCount = (userId, postId) => {
+	const defer = q.defer();
+
+	if (userId && postId) {
+		_removeEntryFromLikesTable(userId, postId)
+			.then(rowCount => {
+				if (rowCount > 0) {
+					return _decrementPostLikeCount(postId).then(() => ({ unliked: true }));
+				} else {
+					return ({ unliked: false });
+				}
+			})
+			.then(({ unliked }) => {
+				const message = unliked ? 'Done unliking the post' : 'Not like to unlike';
+				console.log(message);
+
+				defer.resolve(unliked);
+			})
+			.catch(err => {
+				console.log('Failed unliking the post');
+
+				defer.reject(err);
+			});
+	} else {
+		console.log('Mandatory parameters: userId, postId');
+
+		defer.reject(new Error('userId or postId missing'));
+	}
+
+	return defer.promise;
+}
+
 module.exports = {
 	getUsers,
 	createUser,
@@ -283,5 +366,6 @@ module.exports = {
 
 	getAllPosts,
 	getPostsByUserId,
-	incrementLikeCount
+	incrementLikeCount,
+	decrementLikeCount
 };

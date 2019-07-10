@@ -20,7 +20,24 @@ const likePost = async (req, res, next) => {
 
     try {
         await db.incrementLikeCount(userId, postId);
-        return res.status(200).send(`Updated like count on ${postId}`);
+        return res.status(200).send(`Liked post: ${postId}`);
+    } catch (err) {
+        next(err);
+    }
+}
+
+const unlikePost = async (req, res, next) => {
+    const postId = req.params.post_id;
+    const userId = req.decoded.id;
+
+    try {
+        const unliked = await db.decrementLikeCount(userId, postId);
+
+        if (unliked) {
+            return res.status(200).send(`Unliked post: ${postId}`);
+        }
+
+        return res.status(200).send(`Post ${postId} is not liked`);
     } catch (err) {
         next(err);
     }
@@ -28,5 +45,6 @@ const likePost = async (req, res, next) => {
 
 module.exports = {
     getGlobalFeed,
-    likePost
+    likePost,
+    unlikePost
 };
