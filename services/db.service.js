@@ -358,6 +358,32 @@ const decrementLikeCount = (userId, postId) => {
 	return defer.promise;
 }
 
+const updatePasswordByUserId = (userId, password) => {
+    const defer = q.defer();
+
+	const query = `
+		UPDATE users
+			SET password = $1
+		WHERE id = $2;
+	`;
+	const params = [password, userId];
+
+	pool.query(query, params, (error, results) => {
+		if (error) {
+			console.log('Error occured while creating user');
+			console.log(error);
+
+			defer.reject(error);
+		} else {
+			console.log(`Updated password of user: ${userId}`);
+
+			defer.resolve(results);
+		}
+	});
+
+	return defer.promise;
+}
+
 module.exports = {
 	getUsers,
 	createUser,
@@ -367,5 +393,6 @@ module.exports = {
 	getAllPosts,
 	getPostsByUserId,
 	incrementLikeCount,
-	decrementLikeCount
+	decrementLikeCount,
+	updatePasswordByUserId
 };
