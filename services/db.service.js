@@ -62,6 +62,33 @@ const getUserByEmail = email => {
 	return defer.promise;
 }
 
+const getUserById = userId => {
+	const defer = q.defer();
+
+	const query = `
+		SELECT *
+		FROM users
+		WHERE id = $1
+		ORDER BY id ASC
+	`;
+	const params = [userId];
+
+	pool.query(query, params, (error, results) => {
+		if (error) {
+			console.log(`Error occured while fetching user details with userId: ${userId}`);
+			console.log(error);
+
+			defer.reject(error);
+		} else {
+			console.log(`Fetched user details with userId: ${userId}`);
+
+			defer.resolve(results.rows[0]);
+		}
+	});
+
+	return defer.promise;
+}
+
 const createUser = user => {
 	const defer = q.defer();
 
@@ -172,6 +199,7 @@ module.exports = {
 	getUsers,
 	createUser,
 	getUserByEmail,
+	getUserById,
 
 	getAllPosts,
 	getPostsByUserId
