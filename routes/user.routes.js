@@ -1,5 +1,7 @@
 'use strict';
 
+const asyncHandler = require('express-async-handler');
+
 const {
     getUserFeed,
     getUserDetails,
@@ -13,7 +15,7 @@ const {
 const urlPrefix = '/api/v1';
 
 module.exports = app => {
-    app.get(`${urlPrefix}/user`, verifyAuthentication, getUserDetails);
-    app.get(`${urlPrefix}/user/feed`, verifyAuthentication, getUserFeed);
-    app.post(`${urlPrefix}/user/password/reset`, verifyAuthentication, resetUserPassword);
+    app.get(`${urlPrefix}/user`, verifyAuthentication, asyncHandler(getUserDetails));
+    app.get(`${urlPrefix}/user/feed`, verifyAuthentication, asyncHandler(getUserFeed));
+    app.post(`${urlPrefix}/user/password/reset`, verifyAuthentication, asyncHandler(resetUserPassword));
 };

@@ -1,5 +1,7 @@
 'use strict';
 
+const asyncHandler = require('express-async-handler');
+
 const {
     registerUser,
     authenticateUser
@@ -8,7 +10,7 @@ const {
 const urlPrefix = '/api/v1';
 
 module.exports = app => {
-    app.post(`${urlPrefix}/signup`, registerUser);
-    app.post(`${urlPrefix}/auth/login`, authenticateUser);
-    app.post(`${urlPrefix}/auth/logout`, (req, res, next) => {});
+    app.post(`${urlPrefix}/signup`, asyncHandler(registerUser));
+    app.post(`${urlPrefix}/auth/login`, asyncHandler(authenticateUser));
+    app.post(`${urlPrefix}/auth/logout`, asyncHandler(() => {}));
 };
