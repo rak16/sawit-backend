@@ -47,12 +47,12 @@ const resetUserPassword = async (req, res, next) => {
         next(new Error(`No user found with id ${userId}`));
     }
 
-    const result = bcrypt.compareSync(oldPassword, user.password); // TODO: Make this async
+    const result = await bcrypt.compare(oldPassword, user.password);
     if (!result) {
         return res.status(401).send('Incorrect password.');
     }
 
-    const hashedPassword = bcrypt.hashSync(newPassword);
+    const hashedPassword = await bcrypt.hash(newPassword);
     await db.updatePasswordByUserId(user.id, hashedPassword);
 
     const expiresIn = 24 * 60 * 60;

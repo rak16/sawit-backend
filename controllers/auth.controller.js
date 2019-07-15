@@ -18,7 +18,7 @@ const registerUser = async (req, res, next) => {
         return res.status(422).send('Mandatory fields: name, email, password');
     }
 
-    const hashedPassword = bcrypt.hashSync(password); // TODO: Change to async hash
+    const hashedPassword = await bcrypt.hash(password);
 
     const params = {
         name,
@@ -58,7 +58,7 @@ const authenticateUser = async (req, res, next) => {
         return res.status(404).send('No user with the given email id');
     }
 
-    const result = bcrypt.compareSync(password, user.password); // TODO: Make this async
+    const result = await bcrypt.compare(password, user.password);
     if (!result) {
         return res.status(401).send('Incorrect password.');
     }
