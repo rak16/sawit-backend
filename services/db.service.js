@@ -123,7 +123,7 @@ const createUser = user => {
 	return defer.promise;
 }
 
-const getAllPosts = (limit = 200, offset = 0) => {
+const getAllPosts = (limit = 50, offset = 0) => {
 	const defer = q.defer();
 
 	const query = `
