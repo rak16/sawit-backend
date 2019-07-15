@@ -6,13 +6,8 @@ const Pool = require('pg').Pool;
 
 const config = require('../config/config');
 
-// TODO: Move to configuration
 const pool = new Pool({
-	user: 'postgres',
-	host: 'localhost',
-	database: 'sawit',
-	password: 'root',
-	port: 5432
+	...config.DB_CONF
 });
 
 const getUsers = () => {
