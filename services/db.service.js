@@ -161,7 +161,7 @@ const getPostsByUserId = (userId, limit = 50, offset = 0) => {
 
 	if (userId) {
 		const query = `
-			SELECT posts.url, posts.caption, posts.created_at
+			SELECT posts.id, posts.url, posts.like_count, posts.caption, posts.created_at
 			FROM posts INNER JOIN (
 				SELECT user_id, post_id
 				FROM likes
